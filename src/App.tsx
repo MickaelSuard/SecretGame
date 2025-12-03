@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
-  Users, FileText, Briefcase, Settings, Crosshair, 
-  Trophy, Ghost, Play, RotateCcw, CheckCircle, 
-  XCircle, Coffee, Code, AlertTriangle, Cpu, Mail, Zap, Brain, Terminal,
-  Maximize, DollarSign, Hand
+  Users, FileText, Briefcase, Settings, Crosshair, Ghost, Play, RotateCcw, CheckCircle, 
+  XCircle, Coffee, Code, AlertTriangle, Cpu, Mail, Zap, Brain, Terminal, DollarSign, Package, Frown, Flag, Bomb, Clock, 
+  ListChecks, Lock, Smile, ListPlus, ArrowLeftRight
 } from 'lucide-react';
 
 // --- TYPES GLOBAUX ---
 
 type Screen = 'ATS' | 'ARCADE';
-type GameMode = 'NONE' | 'SHOOTER' | 'BINGO' | 'SNAKE' | 'MEMORY' | 'TYPER' | 'SLIDER' | 'REACTION';
+// MODIFICATION: Remplacement de 'MATRIX' par 'SWIPER'
+type GameMode = 'NONE' | 'SHOOTER' | 'BINGO' | 'SNAKE' | 'MEMORY' | 'TYPER' | 'SLIDER' | 'DROPPER' | 'CHECK' | 'JUMPER' | 'SWIPER' | 'SIMON' | 'BALANCE'; 
 
 // --- MAIN COMPONENT ---
 
@@ -56,7 +56,7 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
           className="p-4 text-xs text-slate-600 hover:text-slate-500 cursor-pointer transition-colors text-center" 
           onClick={onSecretClick}
         >
-          v4.1.0 (Fix)
+          v4.5.1 (12 Games)
         </div>
       </aside>
 
@@ -97,7 +97,7 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
   );
 }
 
-// --- PARTIE 2 : HUB ARCADE ---
+// --- PARTIE 2 : HUB ARCADE (MIS A JOUR AVEC 12 JEUX) ---
 
 function ArcadeRoom({ onExit }: { onExit: () => void }) {
   const [game, setGame] = useState<GameMode>('NONE');
@@ -107,10 +107,10 @@ function ArcadeRoom({ onExit }: { onExit: () => void }) {
       <div className="h-14 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-6 z-20 shadow-lg">
         <div className="flex items-center gap-2 text-green-400">
           <Terminal size={20} />
-          <span className="font-bold tracking-widest text-sm md:text-base">SECRET_DEV_CONSOLE_V4.1</span>
+          <span className="font-bold tracking-widest text-sm md:text-base">SECRET_DEV_BG_DU_69</span>
         </div>
         <button onClick={onExit} className="text-xs bg-red-600/20 text-red-400 border border-red-500/50 px-3 py-1 rounded hover:bg-red-600 hover:text-white transition">
-          EXIT (BOSS KEY)
+          SORTIR 
         </button>
       </div>
 
@@ -118,33 +118,38 @@ function ArcadeRoom({ onExit }: { onExit: () => void }) {
         {game === 'NONE' && (
           <div className="absolute inset-0 overflow-y-auto p-8">
             <div className="max-w-7xl mx-auto">
-              <h2 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
-                CHOOSE YOUR MISSION
+              <h2 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-linear-to-r from-green-400 to-blue-500">
+                Choisis ton jeu
               </h2>
-              <p className="text-gray-400 mb-8">Sélectionnez un module d'entraînement.</p>
+              <p className="text-gray-400 mb-8">Sélectionnez un module (12 disponibles).</p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                {/* JEUX 1-6 (EXISTANTS) */}
+                <GameCard title="CV BLASTER" subtitle="Shoot 'em up" desc="Détruisez les mauvais CVs avant l'invasion." icon={<Crosshair size={32} />} color="from-blue-600 to-blue-800" onClick={() => setGame('SHOOTER')} />
+                <GameCard title="COFFEE SNAKE" subtitle="Classic Snake" desc="Buvez le café. Évitez les murs. Gérez la file d'attente." icon={<Coffee size={32} />} color="from-green-600 to-emerald-800" onClick={() => setGame('SNAKE')} />
+                <GameCard title="BULLSH*T BINGO" subtitle="Reflex Clicker" desc="Cliquez sur les buzzwords corporatifs vides de sens." icon={<AlertTriangle size={32} />} color="from-orange-600 to-red-800" onClick={() => setGame('BINGO')} />
+                <GameCard title="TALENT MATCH" subtitle="Memory Card" desc="Trouvez les paires de technologies compatibles." icon={<Brain size={32} />} color="from-purple-600 to-indigo-800" onClick={() => setGame('MEMORY')} />
+                <GameCard title="INBOX TYPER" subtitle="Typing Defense" desc="Tapez les mots pour détruire les emails urgents." icon={<Mail size={32} />} color="from-pink-600 to-rose-800" onClick={() => setGame('TYPER')} />
+                <GameCard title="BUDGET BALANCER" subtitle="Timing Slider" desc="Négociez la bonne offre ! Arrêtez le curseur sur la zone verte." icon={<DollarSign size={32} />} color="from-yellow-500 to-amber-700" onClick={() => setGame('SLIDER')} />
+                
+                {/* JEUX 7-9 (RÉCENTS) */}
+                <GameCard title="DEP DROPPER" subtitle="Precision Timing" desc="Déposez le module de dépendance sur la bonne plateforme. La cible rétrécit !" icon={<Package size={32} />} color="from-cyan-500 to-teal-700" onClick={() => setGame('DROPPER')} />
+                <GameCard title="HEALTH CHECK HERO" subtitle="Deduction Puzzle (Démineur)" desc="Localisez les serveurs avec erreur critique ('Mines') en utilisant les indices de proximité." icon={<Bomb size={32} />} color="from-lime-500 to-green-700" onClick={() => setGame('CHECK')} />
+                <GameCard title="JIRA JUMPER" subtitle="Endless Runner" desc="Sautez par-dessus les tickets 'bloquants' et les demandes de dernière minute. Timing !" icon={<ListChecks size={32} />} color="from-red-700 to-red-900" onClick={() => setGame('JUMPER')} />
+                
                 <GameCard 
-                  title="CV BLASTER" subtitle="Shoot 'em up" desc="Détruisez les mauvais CVs avant l'invasion." icon={<Crosshair size={32} />} color="from-blue-600 to-blue-800" onClick={() => setGame('SHOOTER')} 
+                  title="CV SWIPER" subtitle="Tinder for Recruiters" desc="Triez les CVs à la vitesse de l'éclair ! Droite = OK (Tech), Gauche = KO (Bullshit)." icon={<ArrowLeftRight size={32} />} color="from-amber-600 to-yellow-800" onClick={() => setGame('SWIPER')} 
+                />
+                
+                {/* JEUX 11-12 (SIMON, BALANCE) */}
+                <GameCard 
+                  title="SECURITY PING" subtitle="Simon Says Memory" desc="Répétez la séquence de sécurité grandissante. Une seule erreur et le serveur est verrouillé." icon={<Lock size={32} />} color="from-blue-700 to-cyan-900" onClick={() => setGame('SIMON')} 
                 />
                 <GameCard 
-                  title="COFFEE SNAKE" subtitle="Classic Snake" desc="Buvez le café. Évitez les murs. Gérez la file d'attente." icon={<Coffee size={32} />} color="from-green-600 to-emerald-800" onClick={() => setGame('SNAKE')} 
+                  title="EGO LIFTER" subtitle="Balance Manager" desc="Maintenez l'équilibre de l'égo du manager. Contrez les mouvements avant la chute." icon={<Smile size={32} />} color="from-fuchsia-600 to-pink-800" onClick={() => setGame('BALANCE')} 
                 />
-                <GameCard 
-                  title="BULLSH*T BINGO" subtitle="Reflex Clicker" desc="Cliquez sur les buzzwords corporatifs vides de sens." icon={<AlertTriangle size={32} />} color="from-orange-600 to-red-800" onClick={() => setGame('BINGO')} 
-                />
-                <GameCard 
-                  title="TALENT MATCH" subtitle="Memory Card" desc="Trouvez les paires de technologies compatibles." icon={<Brain size={32} />} color="from-purple-600 to-indigo-800" onClick={() => setGame('MEMORY')} 
-                />
-                 <GameCard 
-                  title="INBOX TYPER" subtitle="Typing Defense" desc="Tapez les mots pour détruire les emails urgents." icon={<Mail size={32} />} color="from-pink-600 to-rose-800" onClick={() => setGame('TYPER')} 
-                />
-                <GameCard 
-                  title="BUDGET BALANCER" subtitle="Timing Slider" desc="Négociez la bonne offre ! Arrêtez le curseur sur la zone verte." icon={<DollarSign size={32} />} color="from-yellow-500 to-amber-700" onClick={() => setGame('SLIDER')} 
-                />
-                <GameCard 
-                  title="RED FLAG BLOCKER" subtitle="Reaction Test" desc="Triez rapidement les bons candidats et évitez les drapeaux rouges." icon={<Hand size={32} />} color="from-cyan-500 to-teal-700" onClick={() => setGame('REACTION')} 
-                />
+
               </div>
             </div>
           </div>
@@ -160,7 +165,13 @@ function ArcadeRoom({ onExit }: { onExit: () => void }) {
                     {game === 'MEMORY' && <MemoryGame onBack={() => setGame('NONE')} />}
                     {game === 'TYPER' && <TyperGame onBack={() => setGame('NONE')} />}
                     {game === 'SLIDER' && <SalarySliderGame onBack={() => setGame('NONE')} />}
-                    {game === 'REACTION' && <RedFlagBlockerGame onBack={() => setGame('NONE')} />}
+                    {game === 'DROPPER' && <DepDropperGame onBack={() => setGame('NONE')} />}
+                    {game === 'CHECK' && <HealthCheckHeroGame onBack={() => setGame('NONE')} />}
+                    {game === 'JUMPER' && <JiraJumperGame onBack={() => setGame('NONE')} />}
+                    {/* NOUVEAU JEU SWIPER */}
+                    {game === 'SWIPER' && <CvSwiperGame onBack={() => setGame('NONE')} />}
+                    {game === 'SIMON' && <SecurityPingGame onBack={() => setGame('NONE')} />}
+                    {game === 'BALANCE' && <EgoLifterGame onBack={() => setGame('NONE')} />}
                 </div>
             </div>
         )}
@@ -170,247 +181,878 @@ function ArcadeRoom({ onExit }: { onExit: () => void }) {
 }
 
 // ============================================================================
-// --- JEU 6 : SALARY SLIDER (CORRIGÉ) ---
+// --- NOUVEAU JEU 10 : CV SWIPER (SWIPER) ---
 // ============================================================================
 
-function SalarySliderGame({ onBack }: { onBack: () => void }) {
-    const [barPosition, setBarPosition] = useState(0); 
-    const [isMoving, setIsMoving] = useState(true);
+type CvType = {
+    id: number;
+    name: string;
+    keywords: string[];
+    isGood: boolean; // True = Swipe Right (Good Match), False = Swipe Left (Bad Match)
+};
+
+const GOOD_KEYWORDS = ['Python', 'Kubernetes', 'Cloud', 'Agile', 'Microservices', 'Clean Code', 'CI/CD', 'Security', 'Rust', 'TDD'];
+const BAD_KEYWORDS = ['Rockstar', 'Synergie', 'Disruptif', '10x Engineer', 'Proactif', 'Ninja', 'Visionnaire', 'Pensée Latérale', 'Gourou', 'Full Stack (Junior)'];
+const NAMES = ["Jean Dupont", "Alice Martin", "Paul Dubois", "Sophie Leclerc", "Thomas Robert", "Julie Moreau"];
+
+function generateCv(): CvType {
+    const isGood = Math.random() > 0.5;
+    const name = NAMES[Math.floor(Math.random() * NAMES.length)];
+    let keywords: string[] = [];
+
+    const numKeywords = 3 + Math.floor(Math.random() * 3);
+    for(let i = 0; i < numKeywords; i++) {
+        if (isGood) {
+            keywords.push(GOOD_KEYWORDS[Math.floor(Math.random() * GOOD_KEYWORDS.length)]);
+        } else {
+            keywords.push(BAD_KEYWORDS[Math.floor(Math.random() * BAD_KEYWORDS.length)]);
+        }
+    }
+    // Assurer que les bons CVs n'ont pas de "bullshit" et inversement
+    if (isGood && Math.random() < 0.2) { // 20% des bons CVs ont un mot-clé douteux
+        keywords[Math.floor(Math.random() * keywords.length)] = BAD_KEYWORDS[Math.floor(Math.random() * 5)];
+    }
+    if (!isGood && Math.random() < 0.2) { // 20% des mauvais CVs ont un bon mot-clé
+        keywords[Math.floor(Math.random() * keywords.length)] = GOOD_KEYWORDS[Math.floor(Math.random() * 5)];
+    }
+
+    // Retirer les doublons
+    keywords = Array.from(new Set(keywords));
+
+    return { id: Date.now() + Math.random(), name, keywords, isGood };
+}
+
+function CvSwiperGame({ onBack }: { onBack: () => void }) {
+    const [currentCv, setCurrentCv] = useState<CvType>(generateCv());
     const [score, setScore] = useState(0);
-    const [targetRange, setTargetRange] = useState({ start: 45, end: 55 });
+    const [streak, setStreak] = useState(0);
+    const [timer, setTimer] = useState(600); // Temps en centièmes de seconde
     const [gameOver, setGameOver] = useState(false);
-    
-    // NEW: Use Ref to store mutable logic (speed and direction) for the interval
-    const gameLogic = useRef({ speed: 4, direction: 1 });
     const timerRef = useRef<number>();
+    const speedRef = useRef(600); // Temps initial pour classer un CV
 
-    const startNewRound = useCallback(() => {
-        const start = Math.floor(Math.random() * 80) + 10;
-        setTargetRange({ start, end: start + 10 });
-        setBarPosition(0);
-        setIsMoving(true);
-        setGameOver(false);
-
-        // Update Ref state for next round difficulty/direction reset
-        gameLogic.current.direction = 1;
-        gameLogic.current.speed = Math.min(15, gameLogic.current.speed + 1);
-    }, []);
+    const startTimer = useCallback(() => {
+        if (gameOver) return;
+        timerRef.current = window.setInterval(() => {
+            setTimer(t => {
+                if (t <= 0) {
+                    setGameOver(true);
+                    return 0;
+                }
+                return t - 1;
+            });
+        }, 10); // Intervalle de 10ms
+    }, [gameOver]);
 
     useEffect(() => {
-        if (gameOver || !isMoving) {
-            clearInterval(timerRef.current);
-            return;
-        }
+        startTimer();
+        return () => window.clearInterval(timerRef.current);
+    }, [startTimer]);
 
-        // The interval closure now only relies on the mutable ref
-        timerRef.current = setInterval(() => {
-            setBarPosition(p => {
-                const logic = gameLogic.current;
-                // Calculate next position
-                let nextPos = p + logic.direction * logic.speed / 2;
-                
-                // Check bounds and reverse direction
-                if (nextPos >= 100 || nextPos <= 0) {
-                    logic.direction *= -1; // Change direction in the mutable ref
-                    nextPos = nextPos >= 100 ? 100 : 0;
-                }
-                return nextPos;
-            });
-        }, 30); 
+    const handleSwipe = useCallback((swipeRight: boolean) => {
+        if (gameOver) return;
 
-        return () => clearInterval(timerRef.current);
-    }, [isMoving, gameOver]); // Dependencies are clean
+        const isCorrect = (currentCv.isGood === swipeRight);
 
-    const handleStop = () => {
-        if (gameOver || !isMoving) return;
-        setIsMoving(false);
+        if (isCorrect) {
+            setScore(s => s + 10 + Math.min(streak * 2, 50)); // Bonus de streak
+            setStreak(s => s + 1);
+            
+            // Augmente la difficulté: réduit le temps et augmente la vitesse
+            speedRef.current = Math.max(80, speedRef.current - 2); 
+            
+            setTimer(speedRef.current);
+            setCurrentCv(generateCv());
 
-        const pos = barPosition;
-        if (pos >= targetRange.start && pos <= targetRange.end) {
-            setScore(s => s + 1);
-            setTimeout(startNewRound, 500);
         } else {
-            setGameOver(true);
+            setStreak(0);
+            setScore(s => Math.max(0, s - 15)); // Pénalité pour mauvaise classification
+            
+            // Petite pénalité de temps ou de difficulté pour une erreur
+            speedRef.current = Math.min(300, speedRef.current + 10);
+            setTimer(speedRef.current);
+            setCurrentCv(generateCv());
         }
-    };
+    }, [gameOver, currentCv, streak]);
+
+    // Contrôles Clavier
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowRight' || e.key === 'd') {
+                e.preventDefault();
+                handleSwipe(true); // Right = Good Match
+            } else if (e.key === 'ArrowLeft' || e.key === 'q' || e.key === 'a') {
+                e.preventDefault();
+                handleSwipe(false); // Left = Bad Match
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleSwipe]);
 
     const handleRestart = () => {
         setScore(0);
-        gameLogic.current.speed = 4; // Reset difficulty
-        startNewRound();
+        setStreak(0);
+        setGameOver(false);
+        speedRef.current = 250;
+        setTimer(speedRef.current);
+        setCurrentCv(generateCv());
+        startTimer();
+    };
+    
+    // Affichage du temps
+    const displayTime = (timer / 100).toFixed(2);
+    const timeColor = timer / speedRef.current < 0.25 ? 'text-red-500' : 'text-yellow-400';
+
+    // UI du CV
+    const renderCv = () => (
+        <div className="w-96 p-6 bg-white rounded-xl shadow-2xl border-4 border-yellow-400 relative">
+            <FileText size={48} className="absolute top-4 left-4 text-gray-300 opacity-70" />
+            <h3 className="text-3xl font-black text-slate-800 border-b pb-2 mb-4 mt-8">{currentCv.name}</h3>
+            <p className="text-sm text-gray-600 mb-4">Profil: Développeur Senior / Architecte</p>
+
+            <div className="text-left">
+                <p className="text-lg font-bold text-slate-700 mb-2">Compétences Clés:</p>
+                <div className="flex flex-wrap gap-2">
+                    {currentCv.keywords.map((kw, index) => {
+                        const isGood = GOOD_KEYWORDS.includes(kw);
+                        const isBad = BAD_KEYWORDS.includes(kw);
+                        let style = "px-3 py-1 rounded-full text-xs font-semibold";
+                        if (isGood) style += " bg-green-100 text-green-800";
+                        else if (isBad) style += " bg-red-100 text-red-800 line-through";
+                        else style += " bg-gray-100 text-gray-600";
+                        return <span key={index} className={style}>{kw}</span>;
+                    })}
+                </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t text-sm text-gray-500 italic">
+                A déjà trié: {score / 10} CVs
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center font-mono">
+            <GameUI score={score} title="CV SWIPER" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} customMsg="Score" />
+
+            {/* Barre de Temps & Streak */}
+            <div className="absolute top-4 right-4 z-10 flex flex-col items-end">
+                <div className="text-xl font-bold p-2 bg-gray-800/80 rounded-lg shadow-xl mb-2">
+                    🔥 STREAK: <span className="text-orange-400">{streak}</span>
+                </div>
+                <div className="text-3xl font-black p-2 bg-gray-800/80 rounded-lg shadow-xl">
+                    Temps : <span className={timeColor}>{displayTime}s</span>
+                </div>
+            </div>
+
+            <div className="mt-20 flex flex-col items-center">
+                <h3 className="text-xl text-gray-300 mb-6 uppercase tracking-widest">
+                    CLASSIFIEZ LE CANDIDAT :
+                </h3>
+                
+                {renderCv()}
+                
+                <div className="flex gap-10 mt-12">
+                    <button 
+                        onClick={() => handleSwipe(false)}
+                        disabled={gameOver}
+                        className="flex items-center gap-3 p-4 bg-red-600 hover:bg-red-700 transition-colors rounded-xl text-white font-black text-2xl shadow-lg border-2 border-red-400 active:scale-95"
+                    >
+                        <ArrowLeftRight size={32} className="rotate-180" /> REJETER (KO)
+                    </button>
+                    <button 
+                        onClick={() => handleSwipe(true)}
+                        disabled={gameOver}
+                        className="flex items-center gap-3 p-4 bg-green-600 hover:bg-green-700 transition-colors rounded-xl text-white font-black text-2xl shadow-lg border-2 border-green-400 active:scale-95"
+                    >
+                        MATCH (OK) <ArrowLeftRight size={32} />
+                    </button>
+                </div>
+                
+                <p className="mt-8 text-lg text-yellow-300/80">
+                    Utilisez [Flèche Gauche] (KO) et [Flèche Droite] (OK)
+                </p>
+            </div>
+        </div>
+    );
+}
+
+
+// --- JEU 9 : JIRA JUMPER (JUMPER) ---
+function JiraJumperGame({ onBack }: { onBack: () => void }) {
+    // État géré par useState pour l'affichage (moins de mises à jour)
+    const [score, setScore] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+    const [, forceUpdate] = useState(0); 
+
+    // État interne géré par useRef pour la boucle de jeu (plus rapide)
+    const gameState = useRef({
+        playerY: 0, 
+        playerVelocity: 0,
+        isJumping: false,
+        obstacles: [] as { id: number; x: number; height: number; type: 'TICKET'; passed: boolean }[], // Ajout de 'passed'
+        gameSpeed: 5, 
+        obstacleSpawnTimer: 0,
+        gameOver: false
+    });
+    const gameLoopRef = useRef<number>();
+
+    // Constantes du jeu
+    const GRAVITY = 1;
+    const JUMP_FORCE = 18;
+    const PLAYER_X = 10;
+
+    const handleJump = useCallback(() => {
+        const state = gameState.current;
+        if (gameOver || state.isJumping) return;
+        
+        state.isJumping = true;
+        state.playerVelocity = JUMP_FORCE;
+    }, [gameOver]);
+
+    const updateGame = useCallback(() => {
+        const state = gameState.current;
+        if (state.gameOver) return;
+
+        // 1. Logique de Saut et Gravité (inchangé)
+        if (state.isJumping) {
+            state.playerY += state.playerVelocity;
+            state.playerVelocity -= GRAVITY; 
+            
+            if (state.playerY <= 0) {
+                state.playerY = 0;
+                state.playerVelocity = 0;
+                state.isJumping = false;
+            }
+        }
+
+        // 2. Logique des Obstacles et Collision
+        let newObstacles = state.obstacles.map(o => ({ 
+            ...o, 
+            x: o.x - state.gameSpeed * 0.15 
+        }));
+
+        let hit = false;
+        const playerBottom = state.playerY + 8;
+        const playerTop = state.playerY + 32;
+
+        for (const obstacle of newObstacles) {
+            const obsWidth = 5; 
+            
+            // Vérification simple de collision X
+            if (obstacle.x > PLAYER_X - obsWidth && obstacle.x < PLAYER_X + 2) {
+                if (playerBottom <= obstacle.height && playerTop > obstacle.height) { 
+                    hit = true;
+                    break;
+                }
+            }
+            
+            // NOUVEAU: Logique de score (ticket passé)
+            if (!obstacle.passed && obstacle.x < PLAYER_X - 5) {
+                obstacle.passed = true;
+                setScore(s => s + 1); // Incrémentation du score
+            }
+        }
+        
+        if (hit) {
+            state.gameOver = true;
+            setGameOver(true);
+            return;
+        }
+
+        // Filtrage des obstacles sortis de l'écran
+        state.obstacles = newObstacles.filter(o => o.x > 0); 
+
+        // 3. Spawner (inchangé)
+        state.obstacleSpawnTimer++;
+        const spawnRate = Math.max(80, 200 - Math.floor(score / 5)); 
+        
+        if (state.obstacleSpawnTimer > spawnRate) {
+            const height = 10 + Math.floor(Math.random() * 20); 
+            state.obstacles.push({ id: Math.random(), x: 100, height: height, type: 'TICKET', passed: false }); // Ajout de passed: false
+            state.obstacleSpawnTimer = 0;
+        }
+
+        // 4. Vitesse Corrigée (progression plus douce)
+        state.gameSpeed = Math.min(10, 5 + Math.sqrt(score) / 10);
+        
+        forceUpdate(n => n + 1);
+    }, [score]); // score est maintenant une dépendance car il est utilisé pour la vitesse
+
+    // ... (Le reste des useEffect, handleRestart et UI est inchangé) ...
+
+    useEffect(() => {
+        const gameLoop = () => {
+            updateGame();
+            if (!gameState.current.gameOver) {
+                gameLoopRef.current = requestAnimationFrame(gameLoop);
+            }
+        };
+
+        if (!gameOver) {
+            gameLoopRef.current = requestAnimationFrame(gameLoop);
+        }
+
+        return () => cancelAnimationFrame(gameLoopRef.current!);
+    }, [gameOver, updateGame]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                handleJump();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleJump]);
+
+    const handleRestart = () => {
+        setScore(0);
+        setGameOver(false);
+        gameState.current = { 
+            playerY: 0, 
+            playerVelocity: 0,
+            isJumping: false,
+            obstacles: [],
+            gameSpeed: 5,
+            obstacleSpawnTimer: 0,
+            gameOver: false
+        };
+        forceUpdate(0); 
     };
 
     return (
-        <div className="w-full h-full bg-slate-900 relative p-12 flex flex-col items-center justify-center font-mono" onClick={handleStop}>
-            <GameUI 
-                score={score} 
-                title="BUDGET BALANCER" 
-                onBack={onBack} 
-                gameOver={gameOver} 
-                onRestart={handleRestart}
-                customMsg="Rondes réussies"
-            />
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center font-mono">
+            <GameUI score={score} title="JIRA JUMPER" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} customMsg="Tickets évités" />
+            
+            {/* ... Reste de l'UI du jeu ... */}
 
-            <div className="w-full max-w-4xl h-16 bg-slate-700 rounded-lg relative overflow-hidden border-4 border-slate-600 shadow-xl cursor-pointer">
-                {/* Target Zone */}
+            <div className="w-full max-w-4xl h-64 border-4 border-slate-700 bg-black/50 relative overflow-hidden mt-20">
+                {/* Sol */}
+                <div className="absolute bottom-0 left-0 right-0 h-4 bg-slate-700/80" />
+
+                {/* Joueur */}
                 <div 
-                    className="absolute h-full transition-all duration-300"
+                    className="absolute w-8 h-8 bg-red-500 rounded-lg transform transition-colors duration-100 ease-out" 
                     style={{ 
-                        left: `${targetRange.start}%`, 
-                        width: `${targetRange.end - targetRange.start}%`, 
-                        backgroundColor: isMoving ? 'rgba(52, 211, 153, 0.4)' : (gameOver ? 'rgba(239, 68, 68, 0.8)' : 'rgba(52, 211, 153, 0.8)')
+                        left: `${PLAYER_X}%`, 
+                        bottom: `${gameState.current.playerY}px`,
+                        width: '32px', 
+                        height: '32px' 
                     }}
                 >
-                    <DollarSign className="absolute inset-0 m-auto text-white/50 animate-pulse" />
+                    <ListChecks size={20} className="text-white m-auto mt-1" />
                 </div>
-                
-                {/* Moving Bar (Curseur) */}
-                <div 
-                    className={`absolute top-0 w-4 h-full bg-yellow-400 shadow-[0_0_10px_#facc15] transform -translate-x-1/2 transition-all duration-50 ${isMoving ? 'ease-linear' : 'ease-out'}`}
-                    style={{ left: `${barPosition}%` }}
-                />
 
-                {/* Markers */}
-                <div className="absolute top-0 h-full w-0.5 bg-red-500" style={{ left: `${targetRange.start}%` }} />
-                <div className="absolute top-0 h-full w-0.5 bg-red-500" style={{ left: `${targetRange.end}%` }} />
+                {/* Obstacles (Tickets) */}
+                {gameState.current.obstacles.map(o => (
+                    <div 
+                        key={o.id}
+                        className="absolute w-5 bg-red-700/80 border-2 border-red-500 rounded-t-sm"
+                        style={{ 
+                            left: `${o.x}%`, 
+                            height: `${o.height}px`, 
+                            bottom: '4px',
+                            width: '20px'
+                        }}
+                    >
+                        <ListPlus size={10} className="text-white m-auto mt-0.5" />
+                    </div>
+                ))}
             </div>
 
             <p className="mt-8 text-xl text-yellow-300/80">
-                {isMoving ? "CLIQUEZ POUR NÉGOCIER" : (gameOver ? "OFFRE NON CONCLUE !" : "SUCCESS, PRÉPAREZ-VOUS...")}
+                APPUYEZ SUR [ESPACE] POUR SAUTER LES TICKETS
             </p>
         </div>
     );
 }
 
-// ============================================================================
-// --- JEU 7 : RED FLAG BLOCKER (CORRIGÉ) ---
-// ============================================================================
+// --- JEU 11 : SECURITY PING (SIMON SAYS) ---
 
-const MESSAGES = [
-    { text: "Demande de congés illimitée", type: 'FLAG' }, { text: "Compétences parfaites", type: 'OK' },
-    { text: "Critique les anciens employeurs", type: 'FLAG' }, { text: "Rigueur et autonomie", type: 'OK' },
-    { text: "Ne connaît pas le poste postulé", type: 'FLAG' }, { text: "Passionné par la mission", type: 'OK' },
-    { text: "Mente sur son CV", type: 'FLAG' }, { text: "Références excellentes", type: 'OK' },
-];
-
-function RedFlagBlockerGame({ onBack }: { onBack: () => void }) {
-    const [message, setMessage] = useState(MESSAGES[1]);
+const PING_COLORS = ['bg-red-600', 'bg-blue-600', 'bg-green-600', 'bg-yellow-600'];
+function SecurityPingGame({ onBack }: { onBack: () => void }) {
+    const [sequence, setSequence] = useState<number[]>([]);
+    const [inputIndex, setInputIndex] = useState(0);
+    const [isFlashing, setIsFlashing] = useState(false);
     const [score, setScore] = useState(0);
-    const [lives, setLives] = useState(3);
-    const [delay, setDelay] = useState(1500);
     const [gameOver, setGameOver] = useState(false);
-    
-    const timerRef = useRef<number>(); // To hold the current auto-fail timeout ID
+    const [activeFlash, setActiveFlash] = useState<number | null>(null);
 
-    const startNewRound = useCallback((currentMessage: typeof message) => {
-        const nextMessage = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
-        setMessage(nextMessage);
-        
-        // Clear previous timeout before setting a new one
-        clearTimeout(timerRef.current);
-        
-        // Timer for auto-fail (captures the type of the currently running round)
-        const currentDelay = delay;
-        timerRef.current = setTimeout(() => {
-            // If the timer expires, it means the user failed to react to the current message
-            if (nextMessage.type === 'OK') {
-                handleGuess('FLAG', nextMessage); // Simulates failure (missing an OK click)
-            } else {
-                handleGuess('OK', nextMessage); // Simulates failure (missing a FLAG click)
-            }
-        }, currentDelay);
+    const startSequence = useCallback(() => {
+        setSequence(p => [...p, Math.floor(Math.random() * 4)]);
+        setInputIndex(0);
+    }, []);
 
-        // Update difficulty only after a successful round
-        setDelay(d => Math.max(500, d - 20));
-
-    }, [delay]); // Recalculate if delay changes
-
-    // We need this effect to start the game and handle game over
     useEffect(() => {
-        if (lives <= 0) {
-            setGameOver(true);
-            clearTimeout(timerRef.current);
-        } else if (!gameOver) {
-            // Only start the first round here, subsequent rounds are started in handleGuess
-            startNewRound(message); 
-        }
-        return () => clearTimeout(timerRef.current);
-    }, [lives, gameOver]);
-
-    const handleGuess = useCallback((guessType: 'OK' | 'FLAG', msg: typeof message = message) => {
-        // CORRECTION: Clear the current timeout immediately to prevent double penalties
-        clearTimeout(timerRef.current);
-        
         if (gameOver) return;
-
-        let isCorrect = false;
-        
-        if (msg.type === 'OK' && guessType === 'OK') {
-            isCorrect = true;
-        } else if (msg.type === 'FLAG' && guessType === 'FLAG') {
-             isCorrect = true;
+        if (sequence.length === 0) {
+            setTimeout(startSequence, 1000);
+            return;
         }
-        
-        if (isCorrect) {
-            setScore(s => s + 1);
+
+        if (inputIndex === sequence.length) {
+            setScore(sequence.length);
+            setTimeout(startSequence, 1500);
+            return;
+        }
+
+        if (inputIndex === 0) {
+            // Déclenche la séquence de flash si on attend une nouvelle entrée
+            let i = 0;
+            const flashInterval = setInterval(() => {
+                if (i >= sequence.length) {
+                    clearInterval(flashInterval);
+                    setIsFlashing(false);
+                    return;
+                }
+                setIsFlashing(true);
+                setActiveFlash(sequence[i]);
+                setTimeout(() => setActiveFlash(null), 300);
+                i++;
+            }, 700);
+        }
+
+    }, [sequence, inputIndex, gameOver, startSequence]);
+
+    const handleButtonClick = useCallback((buttonIndex: number) => {
+        if (isFlashing || gameOver) return;
+
+        // Flash de réponse (petit feedback)
+        setActiveFlash(buttonIndex);
+        setTimeout(() => setActiveFlash(null), 100);
+
+        if (buttonIndex === sequence[inputIndex]) {
+            setInputIndex(i => i + 1);
         } else {
-            setLives(l => l - 1);
+            setGameOver(true);
         }
-
-        // Start the next round only if the game is not over
-        if (lives > 1) startNewRound(msg);
-
-    }, [lives, gameOver, startNewRound, message]);
+    }, [isFlashing, gameOver, sequence, inputIndex]);
 
     const handleRestart = () => {
+        setSequence([]);
         setScore(0);
-        setLives(3);
-        setDelay(1500);
         setGameOver(false);
+        setInputIndex(0);
+        setIsFlashing(false);
+        setActiveFlash(null);
     };
 
     return (
-        <div className="w-full h-full bg-teal-900 relative p-8 flex flex-col items-center justify-between font-mono">
-            <GameUI score={score} title="RED FLAG BLOCKER" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} />
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center justify-center font-mono">
+            <GameUI score={score} title="SECURITY PING" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} customMsg="Longueur séquence" />
 
-            <div className="absolute top-4 right-40 flex items-center gap-2 text-xl text-red-400 font-bold">
-                Vies: {Array(lives).fill(0).map((_, i) => <Zap key={i} size={24} fill="currentColor" />)}
+            <div className="text-xl text-gray-300 mb-6 uppercase tracking-widest flex items-center gap-4">
+                <Lock size={30} className="text-cyan-400" /> 
+                {isFlashing ? 'MÉMORISATION...' : (gameOver ? 'SÉQUENCE ERRONÉE !' : 'ENTRÉE REQUISE')}
             </div>
 
-            <div className="flex flex-col items-center gap-6 mt-20">
-                <h3 className="text-2xl text-teal-300">ÉVALUATION CANDIDAT EN COURS...</h3>
-                <div className="p-8 bg-slate-800 rounded-xl shadow-2xl border-4 border-teal-700 w-full max-w-lg min-h-[150px] flex items-center justify-center">
-                    <p className={`text-3xl font-black ${gameOver ? 'text-red-500' : 'text-white'}`}>
-                        {gameOver ? "ENTRETIEN TERMINÉ" : message.text}
-                    </p>
-                </div>
+            <div className="grid grid-cols-2 gap-8 p-8 bg-gray-800 rounded-2xl shadow-2xl border-4 border-gray-700">
+                {PING_COLORS.map((color, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handleButtonClick(index)}
+                        className={`w-32 h-32 rounded-lg transition-all duration-100 
+                                    ${color} 
+                                    ${isFlashing ? 'cursor-not-allowed' : 'hover:scale-105 active:scale-95 cursor-pointer'}
+                                    ${activeFlash === index ? 'shadow-[0_0_25px_8px_#fff] scale-105 opacity-100' : 'opacity-80'}
+                                    ${gameOver && 'opacity-30 cursor-not-allowed'}
+                        `}
+                        disabled={isFlashing || gameOver}
+                    />
+                ))}
             </div>
 
-            <div className="flex gap-8 w-full max-w-xl mb-10">
-                <button 
-                    onClick={() => handleGuess('OK')} 
-                    disabled={gameOver}
-                    className="flex-1 p-6 bg-green-600 rounded-xl text-white font-bold text-2xl hover:bg-green-500 transition disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg"
-                >
-                    <CheckCircle size={32} /> C'EST BON
-                </button>
-                <button 
-                    onClick={() => handleGuess('FLAG')} 
-                    disabled={gameOver}
-                    className="flex-1 p-6 bg-red-600 rounded-xl text-white font-bold text-2xl hover:bg-red-500 transition disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg"
-                >
-                    <XCircle size={32} /> DRAPEAU ROUGE
-                </button>
-            </div>
+            <p className="mt-8 text-lg text-yellow-300/80">
+                Répétez la séquence. Longueur actuelle: <span className="text-white font-bold">{sequence.length - 1}</span>
+            </p>
         </div>
     );
 }
 
-// ============================================================================
-// --- AUTRES JEUX (Non Modifiés) ---
-// (Le code des 5 autres jeux n'est pas affiché ici pour la concision, mais il est dans le fichier complet fourni au client.)
-// ============================================================================
+// --- JEU 12 : EGO LIFTER (BALANCE) ---
+function EgoLifterGame({ onBack }: { onBack: () => void }) {
+    const [balance, setBalance] = useState(0); // -100 (Gauche) à 100 (Droite)
+    const [score, setScore] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+    const gameLogic = useRef({ direction: 1, speed: 1, maxShift: 2 });
+    const timerRef = useRef<number>();
 
+    const updateBalance = useCallback((shift: number) => {
+        setBalance(b => {
+            let newBalance = b + shift;
+            if (Math.abs(newBalance) >= 100) {
+                setGameOver(true);
+                return newBalance >= 100 ? 100 : -100;
+            }
+            return newBalance;
+        });
+    }, []);
+
+    const applyCounterForce = useCallback((direction: 'LEFT' | 'RIGHT') => {
+        if (gameOver) return;
+        const force = direction === 'LEFT' ? -15 : 15;
+        updateBalance(force);
+    }, [gameOver, updateBalance]);
+
+    // Mouvement automatique (Ego)
+    useEffect(() => {
+        if (gameOver) {
+            clearInterval(timerRef.current);
+            return;
+        }
+
+        timerRef.current = setInterval(() => {
+            const logic = gameLogic.current;
+            updateBalance(logic.direction * logic.speed);
+
+            // Change aléatoirement la direction et augmente la difficulté
+            if (Math.random() < 0.1) {
+                logic.direction *= -1;
+                logic.speed = Math.random() * logic.maxShift + 0.5;
+            }
+
+            // Augmente la difficulté avec le score (temps passé)
+            logic.maxShift = Math.min(5, 2 + score / 500);
+
+            setScore(s => s + 1); // Score basé sur le temps de survie
+        }, 100);
+
+        return () => clearInterval(timerRef.current);
+    }, [gameOver, updateBalance, score]);
+
+    // Contrôles Clavier
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft' || e.key === 'q' || e.key === 'a') {
+                e.preventDefault();
+                applyCounterForce('LEFT');
+            } else if (e.key === 'ArrowRight' || e.key === 'd') {
+                e.preventDefault();
+                applyCounterForce('RIGHT');
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [applyCounterForce]);
+
+    const handleRestart = () => {
+        setScore(0);
+        setGameOver(false);
+        setBalance(0);
+        gameLogic.current = { direction: 1, speed: 1, maxShift: 2 };
+    };
+
+    const clamp = (num: number) => Math.min(100, Math.max(-100, num));
+    const pivotStyle = { transform: `rotate(${clamp(balance / 3)}deg)` };
+
+    return (
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center justify-center font-mono">
+            <GameUI score={score} title="EGO LIFTER" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} customMsg="Temps survie" />
+
+            <div className="w-full max-w-2xl h-64 relative mt-20">
+                {/* Support (Base) */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-10 bg-slate-700 rounded-b-xl" />
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-10 h-10 bg-gray-600 rounded-full border-2 border-gray-500" />
+                
+                {/* La Barre d'Équilibre (Pivot) */}
+                <div 
+                    className="absolute bottom-12 left-1/2 w-full max-w-2xl h-4 bg-yellow-500 shadow-[0_0_10px_#f59e0b] rounded-md transform -translate-x-1/2 transition-transform duration-100 ease-out origin-center" 
+                    style={pivotStyle}
+                >
+                    {/* Le Poids (Ego) */}
+                    <div 
+                        className="absolute w-12 h-12 bg-fuchsia-600 rounded-full border-4 border-fuchsia-400 shadow-xl flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2" 
+                        style={{ left: `${50 + balance / 2}%`, top: '50%' }} // Balance 0 -> 50%
+                    >
+                        <Smile size={24} className="text-white" />
+                    </div>
+                </div>
+            </div>
+            
+            <p className="mt-12 text-xl text-yellow-300/80">
+                UTILISEZ [FLÈCHE GAUCHE] ET [FLÈCHE DROITE] POUR CONTRE-BALANCER
+            </p>
+        </div>
+    );
+}
+
+// --- JEU 8 : HEALTH CHECK HERO (DÉMINEUR) ---
+const ROWS = 8;
+const COLS = 8;
+const MINES = 10;
+interface Cell { isMine: boolean; isRevealed: boolean; isFlagged: boolean; count: number; }
+const initializeBoard = (): Cell[][] => {
+    let board: Cell[][] = Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => ({ isMine: false, isRevealed: false, isFlagged: false, count: 0 })));
+    let minesPlaced = 0;
+    while (minesPlaced < MINES) {
+        const row = Math.floor(Math.random() * ROWS);
+        const col = Math.floor(Math.random() * COLS);
+        if (!board[row][col].isMine) { board[row][col].isMine = true; minesPlaced++; }
+    }
+    for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (board[r][c].isMine) continue;
+            let mineCount = 0;
+            for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                    if (dr === 0 && dc === 0) continue;
+                    const nr = r + dr;
+                    const nc = c + dc;
+                    if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS && board[nr][nc].isMine) { mineCount++; }
+                }
+            }
+            board[r][c].count = mineCount;
+        }
+    }
+    return board;
+};
+
+function HealthCheckHeroGame({ onBack }: { onBack: () => void }) {
+    const [board, setBoard] = useState<Cell[][]>(initializeBoard());
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [isGameWon, setIsGameWon] = useState(false);
+    const [flagsRemaining, setFlagsRemaining] = useState(MINES);
+    const [startTime, setStartTime] = useState<number | null>(null);
+    const [elapsedTime, setElapsedTime] = useState(0);
+    const timerRef = useRef<number>();
+
+    useEffect(() => {
+        if (!startTime || isGameOver || isGameWon) {
+            window.clearInterval(timerRef.current);
+            return;
+        }
+        timerRef.current = window.setInterval(() => {
+            setElapsedTime(Math.floor((Date.now() - startTime!) / 1000));
+        }, 1000);
+        return () => window.clearInterval(timerRef.current);
+    }, [startTime, isGameOver, isGameWon]);
+
+    const checkWin = useCallback((currentBoard: Cell[][]) => {
+        let hiddenNonMines = 0;
+        for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+                if (!currentBoard[r][c].isMine && !currentBoard[r][c].isRevealed) { hiddenNonMines++; }
+            }
+        }
+        if (hiddenNonMines === 0) {
+            setIsGameWon(true);
+            window.clearInterval(timerRef.current);
+            setBoard(currentBoard.map(row => row.map(cell => 
+                cell.isMine && !cell.isFlagged ? { ...cell, isFlagged: true } : cell
+            )));
+        }
+    }, []);
+
+    const revealCell = useCallback((r: number, c: number, currentBoard: Cell[][]): Cell[][] => {
+        if (r < 0 || r >= ROWS || c < 0 || c >= COLS || currentBoard[r][c].isRevealed || currentBoard[r][c].isFlagged) { return currentBoard; }
+        currentBoard[r][c].isRevealed = true;
+        if (currentBoard[r][c].count === 0 && !currentBoard[r][c].isMine) {
+            for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                    if (dr === 0 && dc === 0) continue;
+                    revealCell(r + dr, c + dc, currentBoard);
+                }
+            }
+        }
+        return currentBoard;
+    }, []);
+
+    const handleCellClick = useCallback((r: number, c: number, e: React.MouseEvent) => {
+        if (isGameOver || isGameWon) return;
+        if (startTime === null) setStartTime(Date.now());
+        if (e.button === 0) { // Left click (Reveal)
+            const cell = board[r][c];
+            if (cell.isRevealed || cell.isFlagged) return;
+            if (cell.isMine) {
+                setIsGameOver(true);
+                window.clearInterval(timerRef.current);
+                setBoard(prevBoard => prevBoard.map(row => row.map(c => c.isMine ? { ...c, isRevealed: true } : c)));
+                return;
+            }
+            const newBoard = revealCell(r, c, board.map(row => row.map(cell => ({ ...cell }))));
+            setBoard(newBoard);
+            checkWin(newBoard);
+        } else if (e.button === 2) { // Right click (Flag)
+            e.preventDefault();
+            const cell = board[r][c];
+            if (cell.isRevealed) return;
+            const newBoard = board.map(row => row.map(c => ({ ...c })));
+            if (cell.isFlagged) {
+                newBoard[r][c].isFlagged = false;
+                setFlagsRemaining(f => f + 1);
+            } else if (flagsRemaining > 0) {
+                newBoard[r][c].isFlagged = true;
+                setFlagsRemaining(f => f - 1);
+            }
+            setBoard(newBoard);
+        }
+    }, [board, isGameOver, isGameWon, startTime, revealCell, checkWin, flagsRemaining]);
+
+    const handleRestart = () => {
+        setBoard(initializeBoard());
+        setIsGameOver(false);
+        setIsGameWon(false);
+        setFlagsRemaining(MINES);
+        setStartTime(null);
+        setElapsedTime(0);
+        window.clearInterval(timerRef.current);
+    };
+
+    useEffect(() => {
+        const disableContextMenu = (e: MouseEvent) => {
+            if (e.target instanceof HTMLElement && e.target.closest('.grid')) { e.preventDefault(); }
+        };
+        window.addEventListener('contextmenu', disableContextMenu);
+        return () => window.removeEventListener('contextmenu', disableContextMenu);
+    }, []);
+
+    const revealedCells = board.flat().filter(cell => cell.isRevealed).length;
+    const score = revealedCells;
+    const message = isGameWon ? "SYSTÈMES SÉCURISÉS ! Temps: " : "ERREUR CRITIQUE ! Server KO.";
+    
+    const MinesweeperUI = (
+        <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center bg-gray-800 p-3 rounded-lg border border-gray-700 shadow-xl">
+            <div className="text-2xl font-black text-red-500 flex items-center gap-2"> <Flag size={24} /> {flagsRemaining} </div>
+            <h2 className="text-3xl font-black text-yellow-400">
+                {isGameWon ? 'WIN' : isGameOver ? 'FAIL' : 'SCANNING...'}
+            </h2>
+            <div className="text-2xl font-black text-blue-400 flex items-center gap-2"> <Clock size={24} /> {elapsedTime.toString().padStart(3, '0')} </div>
+        </div>
+    );
+    
+    const renderCellContent = (cell: Cell) => {
+        if (cell.isRevealed) {
+            if (cell.isMine) { return <Bomb size={24} className="text-red-600" />; } 
+            else if (cell.count > 0) {
+                const colorMap = ['text-blue-500', 'text-green-500', 'text-yellow-500', 'text-orange-500', 'text-red-500', 'text-purple-500', 'text-pink-500', 'text-slate-200'];
+                return <span className={`text-2xl font-black ${colorMap[cell.count - 1]}`}>{cell.count}</span>;
+            } else { return <CheckCircle size={18} className="text-green-500/50" />; }
+        } else if (cell.isFlagged) { return <Flag size={20} className="text-yellow-400" />; }
+        return null;
+    };
+
+    return (
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center justify-center font-mono">
+            {MinesweeperUI}
+            <div className="mt-20">
+                <div className="grid border-4 border-gray-700 bg-gray-800"
+                     style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)`, gridTemplateRows: `repeat(${ROWS}, 1fr)`, width: `${COLS * 50}px`, height: `${ROWS * 50}px` }}>
+                    {board.map((row, r) => 
+                        row.map((cell, c) => (
+                            <div key={`${r}-${c}`} className={`w-12 h-12 flex items-center justify-center border border-gray-700 transition-all duration-100 
+                                    ${cell.isRevealed ? 'bg-gray-900' : 'bg-slate-700 hover:bg-slate-600 active:bg-slate-500 cursor-pointer'}`}
+                                onClick={(e) => handleCellClick(r, c, e)}
+                                onContextMenu={(e) => handleCellClick(r, c, e)}
+                            >
+                                {renderCellContent(cell)}
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+            <GameUI score={score} title="HEALTH CHECK HERO" onBack={onBack} gameOver={isGameOver || isGameWon} onRestart={handleRestart} customMsg="Serveurs OK" message={isGameWon ? message + `${elapsedTime}s` : message} />
+        </div>
+    );
+}
+
+
+// --- JEU 7 : DEP DROPPER (MAINTENU) ---
+const INITIAL_WIDTH = 25;
+const INITIAL_SPEED = 2.5;
+function DepDropperGame({ onBack }: { onBack: () => void }) {
+    const [blockX, setBlockX] = useState(50); 
+    const [score, setScore] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+    const [target, setTarget] = useState({ position: 45, width: INITIAL_WIDTH });
+    const [isMoving, setIsMoving] = useState(true);
+    const gameLogic = useRef({ direction: 1, speed: INITIAL_SPEED });
+    const timerRef = useRef<number>();
+
+    const startNewRound = useCallback((success: boolean) => {
+        if (success) {
+            setScore(s => s + 1);
+            const newWidth = Math.max(5, target.width - 1.5); 
+            gameLogic.current.speed = Math.min(10, INITIAL_SPEED + (score + 1) * 0.5); 
+            const newPos = Math.random() * (100 - newWidth);
+            setTarget({ position: newPos, width: newWidth });
+            setBlockX(50);
+        } else {
+            setGameOver(true);
+            setIsMoving(false);
+            return;
+        }
+        setIsMoving(true);
+        gameLogic.current.direction *= -1;
+    }, [score, target.width]);
+
+    useEffect(() => {
+        if (gameOver || !isMoving) { clearInterval(timerRef.current); return; }
+        timerRef.current = setInterval(() => {
+            setBlockX(x => {
+                const logic = gameLogic.current;
+                let nextX = x + logic.direction * logic.speed / 2;
+                if (nextX >= 100 || nextX <= 0) { logic.direction *= -1; nextX = nextX >= 100 ? 100 : 0; }
+                return nextX;
+            });
+        }, 20); 
+        return () => clearInterval(timerRef.current);
+    }, [isMoving, gameOver]);
+
+    const handleDrop = useCallback(() => {
+        if (gameOver || !isMoving) return;
+        setIsMoving(false);
+        clearInterval(timerRef.current);
+        const blockCenter = blockX;
+        const targetStart = target.position;
+        const targetEnd = target.position + target.width;
+        if (blockCenter >= targetStart && blockCenter <= targetEnd) {
+            setTimeout(() => startNewRound(true), 300);
+        } else {
+            setTimeout(() => startNewRound(false), 300);
+        }
+    }, [gameOver, isMoving, blockX, target.position, target.width, startNewRound]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); handleDrop(); }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleDrop]);
+
+    const handleRestart = () => {
+        setScore(0); setGameOver(false); setTarget({ position: 45, width: INITIAL_WIDTH });
+        gameLogic.current = { direction: 1, speed: INITIAL_SPEED }; startNewRound(true);
+    };
+
+    return (
+        <div className="w-full h-full bg-slate-900 relative p-8 flex flex-col items-center justify-center font-mono" onClick={handleDrop}>
+            <GameUI score={score} title="DEP DROPPER" onBack={onBack} gameOver={gameOver} onRestart={handleRestart} customMsg="Modules empilés" />
+            
+            <div className="w-full max-w-4xl h-80 relative mt-16 cursor-crosshair">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-slate-700"/>
+                <div className={`absolute top-0 w-8 h-8 bg-teal-400 rounded-lg shadow-[0_0_15px_#2dd4bf] transform -translate-x-1/2 transition-all duration-30 ${isMoving ? 'ease-linear' : 'ease-out'}`} style={{ left: `${blockX}%` }}>
+                    <Package size={20} className="text-slate-900 m-auto mt-1" />
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-10 bg-slate-700 rounded-b-lg border-t-2 border-slate-600"/>
+                <div 
+                    className={`absolute bottom-0 h-10 bg-green-600/80 transition-all duration-300 rounded-t-lg border-2 border-green-400 shadow-[0_0_10px_#10b981]`}
+                    style={{ left: `${target.position}%`, width: `${target.width}%`, opacity: gameOver ? 0.3 : 1 }}
+                >
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white/70"> {target.width.toFixed(1)}% </span>
+                </div>
+                {!isMoving && gameOver && (
+                    <Frown size={40} className="absolute text-red-500 animate-pulse transition-opacity duration-300" 
+                        style={{ left: `${blockX}%`, bottom: '20px', transform: 'translateX(-50%)' }} />
+                )}
+            </div>
+            <p className="mt-8 text-xl text-yellow-300/80"> CLIQUEZ OU APPUYEZ SUR [ESPACE] POUR DÉPOSER LE MODULE </p>
+        </div>
+    );
+}
 
 // --- JEU 1 : CV BLASTER (SHOOTER) ---
 function ShooterGame({ onBack }: { onBack: () => void }) {
@@ -435,7 +1077,6 @@ function ShooterGame({ onBack }: { onBack: () => void }) {
             spawnTimer = 0;
           }
           state.enemies = state.enemies.map(e => ({ ...e, y: e.y + 0.5 }));
-          
           const survivors = [];
           for (const enemy of state.enemies) {
               let hit = false;
@@ -544,7 +1185,7 @@ function SnakeGame({ onBack }: { onBack: () => void }) {
 }
 
 // --- JEU 3 : BULLSH*T BINGO (CLICKER) ---
-const WORDS = ["ASAP", "Synergie", "Disruptif", "Proactif", "Ninja", "Rockstar", "Agile", "KPI", "Feedback", "Challenge", "Pipeline", "Scalable", "Corporate", "Ping", "Deep Dive"];
+const WORDS_BINGO = ["ASAP", "Synergie", "Disruptif", "Proactif", "Ninja", "Rockstar", "Agile", "KPI", "Feedback", "Challenge", "Pipeline", "Scalable", "Corporate", "Ping", "Deep Dive"];
 function BingoGame({ onBack }: { onBack: () => void }) {
   const [items, setItems] = useState<any[]>([]);
   const [score, setScore] = useState(0);
@@ -557,7 +1198,7 @@ function BingoGame({ onBack }: { onBack: () => void }) {
     const spawner = setInterval(() => {
         setItems(prev => {
             const clean = prev.filter(i => Date.now() - i.created < 2000);
-            if(Math.random() > 0.3) clean.push({ id: Math.random(), text: WORDS[Math.floor(Math.random()*WORDS.length)], x: Math.random()*80+10, y: Math.random()*80+10, created: Date.now() });
+            if(Math.random() > 0.3) clean.push({ id: Math.random(), text: WORDS_BINGO[Math.floor(Math.random()*WORDS_BINGO.length)], x: Math.random()*80+10, y: Math.random()*80+10, created: Date.now() });
             return clean;
         });
     }, 600);
@@ -570,7 +1211,7 @@ function BingoGame({ onBack }: { onBack: () => void }) {
       <div className="absolute top-4 right-40 text-2xl font-mono text-white">Temps: {timeLeft}s</div>
       {items.map(i => (
         <button key={i.id} onMouseDown={() => { setScore(s=>s+1); setItems(p=>p.filter(x=>x.id!==i.id)); }}
-          className="absolute -translate-x-1/2 -translate-y-1/2 px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold rounded-full shadow-lg hover:scale-110 active:scale-95 animate-in zoom-in duration-200"
+          className="absolute -translate-x-1/2 -translate-y-1/2 px-4 py-2 bg-linear-to-r from-pink-500 to-rose-600 text-white font-bold rounded-full shadow-lg hover:scale-110 active:scale-95 animate-in zoom-in duration-200"
           style={{ left: `${i.x}%`, top: `${i.y}%` }}>{i.text}</button>
       ))}
     </div>
@@ -698,23 +1339,131 @@ function TyperGame({ onBack }: { onBack: () => void }) {
     );
 }
 
+// --- JEU 6 : BUDGET BALANCER (SLIDER) ---
+function SalarySliderGame({ onBack }: { onBack: () => void }) {
+    const [barPosition, setBarPosition] = useState(0); 
+    const [isMoving, setIsMoving] = useState(true);
+    const [score, setScore] = useState(0);
+    const [targetRange, setTargetRange] = useState({ start: 45, end: 55 });
+    const [gameOver, setGameOver] = useState(false);
+    
+    const gameLogic = useRef({ speed: 4, direction: 1 });
+    const timerRef = useRef<number>();
+
+    const startNewRound = useCallback(() => {
+        const start = Math.floor(Math.random() * 80) + 10;
+        setTargetRange({ start, end: start + 10 });
+        setBarPosition(0);
+        setIsMoving(true);
+        setGameOver(false);
+
+        gameLogic.current.direction = 1;
+        gameLogic.current.speed = Math.min(15, gameLogic.current.speed + 1);
+    }, []);
+
+    useEffect(() => {
+        if (gameOver || !isMoving) {
+            clearInterval(timerRef.current);
+            return;
+        }
+
+        timerRef.current = setInterval(() => {
+            setBarPosition(p => {
+                const logic = gameLogic.current;
+                let nextPos = p + logic.direction * logic.speed / 2;
+                
+                if (nextPos >= 100 || nextPos <= 0) {
+                    logic.direction *= -1;
+                    nextPos = nextPos >= 100 ? 100 : 0;
+                }
+                return nextPos;
+            });
+        }, 30); 
+
+        return () => clearInterval(timerRef.current);
+    }, [isMoving, gameOver]);
+
+    const handleStop = () => {
+        if (gameOver || !isMoving) return;
+        setIsMoving(false);
+
+        const pos = barPosition;
+        if (pos >= targetRange.start && pos <= targetRange.end) {
+            setScore(s => s + 1);
+            setTimeout(startNewRound, 500);
+        } else {
+            setGameOver(true);
+        }
+    };
+
+    const handleRestart = () => {
+        setScore(0);
+        gameLogic.current.speed = 4;
+        startNewRound();
+    };
+
+    return (
+        <div className="w-full h-full bg-slate-900 relative p-12 flex flex-col items-center justify-center font-mono" onClick={handleStop}>
+            <GameUI 
+                score={score} 
+                title="BUDGET BALANCER" 
+                onBack={onBack} 
+                gameOver={gameOver} 
+                onRestart={handleRestart}
+                customMsg="Rondes réussies"
+            />
+
+            <div className="w-full max-w-4xl h-16 bg-slate-700 rounded-lg relative overflow-hidden border-4 border-slate-600 shadow-xl cursor-pointer">
+                <div 
+                    className="absolute h-full transition-all duration-300"
+                    style={{ 
+                        left: `${targetRange.start}%`, 
+                        width: `${targetRange.end - targetRange.start}%`, 
+                        backgroundColor: isMoving ? 'rgba(52, 211, 153, 0.4)' : (gameOver ? 'rgba(239, 68, 68, 0.8)' : 'rgba(52, 211, 153, 0.8)')
+                    }}
+                >
+                    <DollarSign className="absolute inset-0 m-auto text-white/50 animate-pulse" />
+                </div>
+                
+                <div 
+                    className={`absolute top-0 w-4 h-full bg-yellow-400 shadow-[0_0_10px_#facc15] transform -translate-x-1/2 transition-all duration-50 ${isMoving ? 'ease-linear' : 'ease-out'}`}
+                    style={{ left: `${barPosition}%` }}
+                />
+
+                <div className="absolute top-0 h-full w-0.5 bg-red-500" style={{ left: `${targetRange.start}%` }} />
+                <div className="absolute top-0 h-full w-0.5 bg-red-500" style={{ left: `${targetRange.end}%` }} />
+            </div>
+
+            <p className="mt-8 text-xl text-yellow-300/80">
+                {isMoving ? "CLIQUEZ POUR NÉGOCIER" : (gameOver ? "OFFRE NON CONCLUE !" : "SUCCESS, PRÉPAREZ-VOUS...")}
+            </p>
+        </div>
+    );
+}
+
 
 // --- UTILS UI ---
 
 function GameUI({ score, title, onBack, gameOver, onRestart, customMsg = "SCORE", message = "" }: any) {
     return (
         <>
-            <div className="absolute top-4 left-4 z-10 font-mono pointer-events-none">
-                <div className="text-3xl text-yellow-400 font-bold drop-shadow-md">{customMsg}: {score}</div>
-                <div className="text-sm text-slate-400 opacity-75">{title}</div>
-            </div>
+            {/* Affichage du score dans le coin supérieur gauche si pas Game Over */}
+            {!gameOver && (
+                <div className="absolute top-4 left-4 z-10 font-mono pointer-events-none p-2 bg-slate-800/80 rounded-lg">
+                    <div className="text-3xl text-yellow-400 font-bold drop-shadow-md">{score}</div>
+                    <div className="text-sm text-slate-400 opacity-75">{customMsg}</div>
+                </div>
+            )}
+            
             <button onClick={onBack} className="absolute top-4 right-4 z-30 p-2 bg-slate-800/80 rounded hover:bg-red-900 text-white border border-slate-700">
                 <XCircle />
             </button>
-            {gameOver && (
+            {(gameOver || message.includes("WIN") || message.includes("SÉCURISÉS") || message.includes("ÉCHEC")) && (
                 <div className="absolute inset-0 bg-black/85 z-50 flex flex-col items-center justify-center animate-in fade-in">
-                    <h2 className="text-5xl text-red-500 font-black mb-4 tracking-tighter">GAME OVER</h2>
-                    <p className="text-white text-2xl mb-2 font-mono">{message || "VOUS AVEZ ÉCHOUÉ"}</p>
+                    <h2 className={`text-5xl font-black mb-4 tracking-tighter ${message.includes("WIN") || message.includes("SÉCURISÉS") ? 'text-green-500' : 'text-red-500'}`}>
+                        {message.includes("WIN") || message.includes("SÉCURISÉS") ? 'VICTOIRE !' : 'ÉCHEC CRITIQUE'}
+                    </h2>
+                    <p className="text-white text-2xl mb-2 font-mono">{message}</p>
                     <p className="text-white text-xl mb-8 font-mono">{customMsg}: {score}</p>
                     <div className="flex gap-4">
                         <button onClick={onRestart} className="px-8 py-4 bg-green-600 rounded font-bold hover:bg-green-500 flex items-center gap-2 text-xl shadow-lg hover:scale-105 transition">
@@ -726,7 +1475,7 @@ function GameUI({ score, title, onBack, gameOver, onRestart, customMsg = "SCORE"
                     </div>
                 </div>
             )}
-             {!gameOver && message && (
+             {!gameOver && message && !message.includes("WIN") && !message.includes("SÉCURISÉS") && (
                 <div className="absolute top-20 z-10 p-2 bg-slate-800/80 rounded-lg text-yellow-400 font-mono text-lg transition-opacity duration-300">
                     {message}
                 </div>

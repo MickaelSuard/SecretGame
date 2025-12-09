@@ -40,10 +40,11 @@ export default function HiddenRecruitmentApp() {
 
 function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
     const rippleRef = useRef<HTMLDivElement>(null);
+    const $rRef = useRef<any>(null);
+    const [ripplesActive, setRipplesActive] = useState(true);
 
     useEffect(() => {
         const loadScripts = async () => {
-            // Charger jQuery si nécessaire
             if (!(window as any).jQuery) {
                 await new Promise<void>((resolve) => {
                     const scriptJQ = document.createElement("script");
@@ -53,47 +54,136 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
                 });
             }
 
-            // Charger jQuery Ripples
             await new Promise<void>((resolve) => {
                 const scriptRipple = document.createElement("script");
-                scriptRipple.src ="https://cdn.jsdelivr.net/npm/jquery.ripples@0.6.3/dist/jquery.ripples.min.js";
+                scriptRipple.src =
+                    "https://cdn.jsdelivr.net/npm/jquery.ripples@0.6.3/dist/jquery.ripples.min.js";
                 scriptRipple.onload = () => resolve();
                 document.body.appendChild(scriptRipple);
             });
 
-            // Initialiser l’effet sur le div
             if (rippleRef.current && (window as any).jQuery) {
-                const $r = (window as any).jQuery(rippleRef.current);
-
-                $r.ripples({
-                    resolution: 512,
-                    dropRadius: 30,      // taille des vagues comme sur Webflow
-                    perturbance: 0.08,   // amplitude faible comme sur Webflow
-                    interactive: true,   // suit la souris
-                });
-
-                // Mettre le canvas au-dessus
-                const canvas = rippleRef.current.querySelector("canvas") as HTMLCanvasElement;
-                if (canvas) {
-                    canvas.style.position = "absolute";
-                    canvas.style.top = "0";
-                    canvas.style.left = "0";
-                    canvas.style.width = "100%";
-                    canvas.style.height = "100%";
-                    canvas.style.zIndex = "0";
-                    canvas.style.pointerEvents = "none";
-                }
+                initRipples();
             }
         };
 
         loadScripts();
 
         return () => {
-            if (rippleRef.current && (window as any).jQuery) {
-                (window as any).jQuery(rippleRef.current).ripples("destroy");
-            }
+            destroyRipples();
         };
     }, []);
+
+    const initRipples = () => {
+        if (!rippleRef.current || !(window as any).jQuery) return;
+        const $r = (window as any).jQuery(rippleRef.current);
+
+        $r.ripples({
+            resolution: 512,
+            dropRadius: 30,
+            perturbance: 0.08,
+            interactive: true,
+        });
+
+        const canvas = rippleRef.current.querySelector("canvas") as HTMLCanvasElement;
+        if (canvas) {
+            canvas.style.position = "absolute";
+            canvas.style.top = "0";
+            canvas.style.left = "0";
+            canvas.style.width = "100%";
+            canvas.style.height = "100%";
+            canvas.style.zIndex = "0";
+            canvas.style.pointerEvents = "none";
+        }
+
+        $rRef.current = $r;
+    };
+
+    const destroyRipples = () => {
+        if ($rRef.current) {
+            $rRef.current.ripples("destroy");
+            // supprimer le canvas pour pouvoir recréer à la réactivation
+            const canvas = rippleRef.current?.querySelector("canvas");
+            if (canvas && canvas.parentNode) {
+                canvas.parentNode.removeChild(canvas);
+            }
+            $rRef.current = null;
+        }
+    };
+
+    const toggleRipples = () => {
+        if (ripplesActive) {
+            destroyRipples();
+            setRipplesActive(false);
+        } else {
+            initRipples();
+            setRipplesActive(true);
+        }
+    };
+
+    console.log(
+        "%cMike%c - Développeur Intégrateur",
+        "color: #00aaff; font-size: 18px; font-weight: bold;",
+        "color: gray; font-size: 16px;"
+    );
+
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    const handleMouseMove = (e: MouseEvent) => {
+        const btn = buttonRef.current;
+        if (!btn) return;
+
+        const rect = btn.getBoundingClientRect();
+        const dx = e.clientX - (rect.left + rect.width / 2);
+        const dy = e.clientY - (rect.top + rect.height / 2);
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const fleeDistance = 120; // distance à laquelle il fuit
+
+        if (dist < fleeDistance) {
+            // direction opposée à la souris
+            let newX = rect.left - (dx / dist) * (fleeDistance - dist);
+            let newY = rect.top - (dy / dist) * (fleeDistance - dist);
+
+            // garder le bouton à l'intérieur de l'écran
+            newX = Math.max(0, Math.min(window.innerWidth - rect.width, newX));
+            newY = Math.max(0, Math.min(window.innerHeight - rect.height, newY));
+
+            btn.style.position = "fixed";
+            btn.style.left = `${newX}px`;
+            btn.style.top = `${newY}px`;
+            btn.style.transform = "translate(0, 0)";
+        }
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            const buttons = document.querySelectorAll<HTMLButtonElement>("button[data-flee]");
+            buttons.forEach((btn) => {
+                const rect = btn.getBoundingClientRect();
+                const dx = e.clientX - (rect.left + rect.width / 2);
+                const dy = e.clientY - (rect.top + rect.height / 2);
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const fleeDistance = 120;
+
+                if (dist < fleeDistance) {
+                    let newX = rect.left - (dx / dist) * (fleeDistance - dist);
+                    let newY = rect.top - (dy / dist) * (fleeDistance - dist);
+
+                    newX = Math.max(0, Math.min(window.innerWidth - rect.width, newX));
+                    newY = Math.max(0, Math.min(window.innerHeight - rect.height, newY));
+
+                    btn.style.position = "fixed";
+                    btn.style.left = `${newX}px`;
+                    btn.style.top = `${newY}px`;
+                    btn.style.transform = "translate(0, 0)";
+                }
+            });
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        return () => window.removeEventListener("mousemove", handleMouseMove);
+    }, []);
+
 
     return (
         <div
@@ -103,20 +193,26 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
                 height: "100vh",
                 position: "relative",
                 overflow: "hidden",
-                backgroundColor: "#a0e9ff",
+                background: "linear-gradient(to bottom, #a0e9ff, #00cfff)",
             }}
             className="flex h-full w-full relative"
         >
             {/* Dashboard contenu */}
-            <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0 bg-opacity-70 backdrop-blur-sm ">
+            <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0 bg-opacity-70 backdrop-blur-sm">
                 <div className="p-6 text-xl font-bold flex items-center gap-2">
                     <Briefcase className="text-blue-400" /> RecruitPro
                 </div>
-                <nav className="flex-1 px-4 space-y-2 mt-4">
+                <nav className="flex-1 px-4 space-y-2 mt-4" onMouseMove={handleMouseMove}>
                     <NavItem icon={<Users />} label="Candidats" active />
                     <NavItem icon={<FileText />} label="Offres" />
                     <NavItem icon={<CheckCircle />} label="Entretiens" />
                     <NavItem icon={<Settings />} label="Paramètres" />
+                    <button data-flee
+                        ref={buttonRef}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm transition-all duration-50"
+                    >
+                        + Créer une offre
+                    </button>
                 </nav>
                 <div
                     className="p-4 text-xs text-slate-600 hover:text-slate-500 cursor-pointer transition-colors text-center"
@@ -126,13 +222,23 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
                 </div>
             </aside>
 
-            <main
-                className="flex-1 p-8 overflow-y-auto bg-blue-800  rounded-tl-xl">
+            <main className="flex-1 p-8 overflow-y-auto bg-blue-800 rounded-tl-xl">
                 <header className="flex justify-between items-center mb-8">
                     <h1 className="text-2xl font-bold text-slate-100">Vue d'ensemble</h1>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm">
-                        + Créer une offre
-                    </button>
+                    <div className="flex gap-2" onMouseMove={handleMouseMove}>
+                        <button
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm"
+                            onClick={toggleRipples}
+                        >
+                            {ripplesActive ? "Désactiver les vagues" : "Activer les vagues"}
+                        </button>
+                        <button data-flee
+                            ref={buttonRef}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-sm transition-all duration-50"
+                        >
+                            + Créer une offre
+                        </button>
+                    </div>
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -165,6 +271,8 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
         </div>
     );
 }
+
+
 
 // --- PARTIE 2 : HUB ARCADE (MIS A JOUR AVEC 12 JEUX) ---
 

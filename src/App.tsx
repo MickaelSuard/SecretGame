@@ -39,9 +39,76 @@ export default function HiddenRecruitmentApp() {
 // --- PARTIE 1 : LE DASHBOARD ATS (LEURRE) ---
 
 function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
+    const rippleRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const loadScripts = async () => {
+            // Charger jQuery si nécessaire
+            if (!(window as any).jQuery) {
+                await new Promise<void>((resolve) => {
+                    const scriptJQ = document.createElement("script");
+                    scriptJQ.src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js";
+                    scriptJQ.onload = () => resolve();
+                    document.body.appendChild(scriptJQ);
+                });
+            }
+
+            // Charger jQuery Ripples
+            await new Promise<void>((resolve) => {
+                const scriptRipple = document.createElement("script");
+                scriptRipple.src ="https://cdn.jsdelivr.net/npm/jquery.ripples@0.6.3/dist/jquery.ripples.min.js";
+                scriptRipple.onload = () => resolve();
+                document.body.appendChild(scriptRipple);
+            });
+
+            // Initialiser l’effet sur le div
+            if (rippleRef.current && (window as any).jQuery) {
+                const $r = (window as any).jQuery(rippleRef.current);
+
+                $r.ripples({
+                    resolution: 512,
+                    dropRadius: 30,      // taille des vagues comme sur Webflow
+                    perturbance: 0.08,   // amplitude faible comme sur Webflow
+                    interactive: true,   // suit la souris
+                });
+
+                // Mettre le canvas au-dessus
+                const canvas = rippleRef.current.querySelector("canvas") as HTMLCanvasElement;
+                if (canvas) {
+                    canvas.style.position = "absolute";
+                    canvas.style.top = "0";
+                    canvas.style.left = "0";
+                    canvas.style.width = "100%";
+                    canvas.style.height = "100%";
+                    canvas.style.zIndex = "0";
+                    canvas.style.pointerEvents = "none";
+                }
+            }
+        };
+
+        loadScripts();
+
+        return () => {
+            if (rippleRef.current && (window as any).jQuery) {
+                (window as any).jQuery(rippleRef.current).ripples("destroy");
+            }
+        };
+    }, []);
+
     return (
-        <div className="flex h-screen w-full">
-            <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0">
+        <div
+            ref={rippleRef}
+            style={{
+                width: "100%",
+                height: "100vh",
+                position: "relative",
+                overflow: "hidden",
+                backgroundColor: "#a0e9ff",
+            }}
+            className="flex h-full w-full relative"
+        >
+            {/* Dashboard contenu */}
+            <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0 bg-opacity-70 backdrop-blur-sm ">
                 <div className="p-6 text-xl font-bold flex items-center gap-2">
                     <Briefcase className="text-blue-400" /> RecruitPro
                 </div>
@@ -59,9 +126,10 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
                 </div>
             </aside>
 
-            <main className="flex-1 p-8 overflow-y-auto bg-slate-50">
+            <main
+                className="flex-1 p-8 overflow-y-auto bg-blue-800  rounded-tl-xl">
                 <header className="flex justify-between items-center mb-8">
-                    <h1 className="text-2xl font-bold text-slate-800">Vue d'ensemble</h1>
+                    <h1 className="text-2xl font-bold text-slate-100">Vue d'ensemble</h1>
                     <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 shadow-sm">
                         + Créer une offre
                     </button>
@@ -73,8 +141,10 @@ function DashboardATS({ onSecretClick }: { onSecretClick: () => void }) {
                     <StatCard title="Offres actives" value="5" color="bg-emerald-50 text-emerald-700" />
                 </div>
 
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="p-4 border-b border-slate-100 font-semibold text-slate-700">Candidatures Récentes</div>
+                <div className="bg-white/70 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="p-4 border-b border-slate-100 font-semibold text-slate-700">
+                        Candidatures Récentes
+                    </div>
                     <table className="w-full text-left">
                         <thead className="bg-slate-50 text-xs uppercase text-slate-500">
                             <tr>
@@ -2027,15 +2097,15 @@ function TheFlipGame({ onBack }: { onBack: () => void }) {
 
     return (
         <div className="w-full h-full bg-gray-900 relative p-8 flex flex-col items-center font-mono">
-            <GameUI 
-                score={score} 
-                title="THE FLIP" 
-                onBack={onBack} 
-                gameOver={gameOver} 
-                onRestart={handleRestart} 
-                customMsg={`Points (Max ${WIN_SCORE})`} 
+            <GameUI
+                score={score}
+                title="THE FLIP"
+                onBack={onBack}
+                gameOver={gameOver}
+                onRestart={handleRestart}
+                customMsg={`Points (Max ${WIN_SCORE})`}
             />
-            
+
             <div className="text-center mt-16">
                 <h3 className="text-3xl font-black mb-4 text-cyan-400">
                     <Users size={32} className="inline-block mr-2" />
@@ -2047,7 +2117,7 @@ function TheFlipGame({ onBack }: { onBack: () => void }) {
                 </p>
 
                 <div className="flex justify-center items-center gap-12 my-10">
-                    
+
                     {/* OPTION PILE (Garder) */}
                     <button
                         onClick={() => handleFlip('PILE')}
@@ -2087,10 +2157,10 @@ function TheFlipGame({ onBack }: { onBack: () => void }) {
                                 {ResultLabel}
                             </div>
                         )}
-                        
+
                     </div>
                 )}
-                
+
                 <p className="mt-8 text-xl text-gray-400">
                     Objectif : Atteindre <span className="text-green-400 font-bold">{WIN_SCORE}</span> points.
                     Éviter de tomber à <span className="text-red-400 font-bold">{LOSE_SCORE}</span> points.
